@@ -1,0 +1,16 @@
+{
+  "name": "antlr4_js_calculator",
+  "version": "1.0.0",
+  "description": "Tutorial that shows how to quickly build a command line calculator with antrl4 and nodejs",
+  "main": "src/main.js",
+  "repository": "git@github.com:tripodsan/antlr4_js_calculator.git",
+  "author": "Tobias Bocanegra <tripod@adobe.ch>",
+  "license": "Apache-2.0",
+  "private": false,
+  "scripts": {
+    "build": "antlr4 -Dlanguage=JavaScript src/parser/Math.g4"
+  },
+  "dependencies": {
+    "antlr4": "^4.7.1"
+  }
+}
