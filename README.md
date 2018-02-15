@@ -1,5 +1,5 @@
 # antlr4_js_calculator
-Example project with [Tutorial](tutorial.md) that shows how to quickly build a command line calculator with antrl4 and node js.
+Example project with [Tutorial](tutorial.md) that shows how to quickly build a command line calculator with antrl4 and nodejs.
 
 The code here is based on the Java example provided by Lucas on [Stackoverflow](https://stackoverflow.com/a/29996191/3229985).
 In particular, the grammar is copied as is.
@@ -45,6 +45,7 @@ Simple calculator.
 > 10 * (3+4) / 10
 : 10 * (3+4) / 10 = 7
 
+> _
 ``` 
 
 with arguments, the calculator just prints the result of the expression given:

@@ -8,9 +8,9 @@
 
 ## Bootstrap the project
 
-First we go and setup the directory structure and initialize the project.
+First we setup the directory structure and initialize the project.
 
-Run yarn or npm init and add all the information or just skip through them.
+Run yarn or npm init, input the information or just skip through them.
 ```bash
 $ yarn init
 ...
@@ -57,7 +57,8 @@ rl.on('line', (input) => {
         rl.close();
         return;
     }
-    const result  = '42';
+    // todo: parse and evaluate the input
+    const result  = '42'; 
     console.log(`: ${input.trim()} = ${result}\n`);
     rl.prompt();
 
@@ -138,7 +139,7 @@ $ ls -1 src/parser/
 
 ## Setup the parser and parse the expression
 
-We create a new helper class `Evaluator` that will use the generated parse to parse the expression
+We create a new helper class `Evaluator` that will use the generated parser to parse the expression
 and then use the parsed tree to calculate the result. But first, let's create the class:
 
 ```bash
@@ -178,17 +179,18 @@ module.exports = class Evaluator {
 };
 ```
 
-This looks a bit complicated, but basically create a stream, feeds it into the lexer that creates
-the tokens and then uses the parser that turn the tokens into a parse tree. 
+This looks a bit complicated, but basically creates a stream, feeds it into the lexer which creates
+the tokens and then uses the parser that turns the tokens into a parse tree. 
 
-We can now use the Evalator in our repl code:
+We can now use the `Evaluator` in our repl code:
 
 main.js
-```
+```js
  const readline = require('readline');
 +const Evaluator = new require('./Evaluator');
 +
 +const evaluator = new Evaluator();
+
  // create a readline interface
  const rl = readline.createInterface({
 
@@ -197,6 +199,7 @@ main.js
          rl.close();
          return;
      }
+-    // todo: parse and evaluate the input     
 -    const result  = 42;
 +    const result  = evaluator.evaluate(input);
      console.log(`: ${input.trim()} = ${result}\n`);
@@ -205,16 +208,16 @@ main.js
 
 ## Create a tree listener that evaluates the expression
 
-All we now need is to travers the parse tree and calculate the result. For that we can create a `ParseTreeListener`.
-Antlr4 generates one for us, based on our grammar. If you look at the generated `MathListener` you see that for each
-grammar rule, there is a enter and exit method. 
+All we now need is to traverse the parse tree and calculate the result. For that we can create a `ParseTreeListener`.
+Antlr4 generates one for us, based on our grammar. If you look at the generated `src/parser/MathListener.js` you see that for each
+grammar rule, there is an enter and exit method generated. 
 
 The `ParseTreeWalker` will traverse the tree and invoke the listener for every node it encounters. Since the grammar 
 follows the mathematical evaluation rules, we can calculate the result during the tree walk.
 
 But since the `MathListener` is generated, we don't want to add our code there, but rather extend from it.
 
-create a new class for it:
+create a new class for our listener:
 
 ```bash
 $ touch src/EvaluatorListener.js
@@ -222,6 +225,9 @@ $ touch src/EvaluatorListener.js
 
 EvaluatorListener.js
 ```js
+const MathListener = require('./parser/MathListener').MathListener;
+const MathLexer = require('./parser/MathLexer').MathLexer;
+
 module.exports = class EvaluatorListener extends MathListener {
 
     constructor() {
@@ -310,7 +316,7 @@ _(I omitted some of the methods above, in order to keep it shorter. but you can 
 
 ## Use the listener to calculate the result
 
-So now we can use the listener to our `Evaluator` to tally up the result:
+So now we can use the listener in the `Evaluator` to tally up the result:
 
 Evaluator.js
 ```js
@@ -326,7 +332,7 @@ Evaluator.js
  };
 ```
 
-That's it! Try out:
+That's it! Try it out:
 
 ```
 $ node src/main.js
@@ -337,5 +343,11 @@ Simple calculator.
 
 ```
 
+## Next Steps
 
+As you might have noticed, the grammar also defines rules for functions, which we didn't handle so far. But
+it shouldn't be too difficult to add support for those as well.
+
+I found that the javascript version of Antlr4 is very close to the original java implementation, so you find a lot
+of the API documentation in their runtime [javdoc](http://www.antlr.org/api/Java/index.html?org/antlr/v4/runtime/package-summary.html)
 
