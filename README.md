@@ -49,7 +49,7 @@ $ npm run build
 
 ### Running
 
-without arguments, the calculator runs as repl (read, execute, print, loop):
+without arguments, the calculator runs as REPL (read-eval-print-loop)
 
 ```
 $ node src/main.js
